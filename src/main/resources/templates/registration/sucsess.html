@@ -31,6 +31,19 @@
                     <li class="snav-item ">
                         <a class="nav-link " href="/reg">Зарегистрироваться</a>
                     </li>
+                    <li class="snav-item ">
+                        <a class="nav-link " href="/sneaker/all">Каталог кроссовок</a>
+                    </li>
+                    <li class="nav-item">
+
+                        <div th:if="${user}">
+                           <button type="button" class="btn btn-light" id="logoutButton"><a href="/delete" class="sigma text-dark">Выйти</a></button>
+                        </div>
+                        <div th:if="${admin}">
+                           <button type="button" class="btn btn-light" id="loginAdminPanel"><a href="/admin" class="sigma text-dark">Войти в админ панель</a></button>
+                        </div>
+
+                    </li>
 
                 </ul>
 

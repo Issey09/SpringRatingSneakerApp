@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин кроссовок</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('https://via.placeholder.com/1920x1080') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px 0;
+        }
+        .sneaker-block {
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            height: 400px;
+            width: 250px;
+        }
+        .sneaker-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        .sneaker-block:hover .sneaker-img {
+            transform: scale(1.05);
+        }
+        .card-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f8d7da;
+        }
+        .card-text {
+            font-size: 1.2rem;
+        }
+        .show-block {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        main {
+            padding-top: 70px; /* Высота header */
+        }
+        .text-dark{
+            text-decoration: none;
+            color: inherit;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Рейтинг кроссовок</a>
+            <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse offcanvas-collapse " id="navbarsExampleDefault">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/log">Войти</a>
+                    </li>
+                    <li class="snav-item ">
+                        <a class="nav-link " href="/reg">Зарегистрироваться</a>
+                    </li>
+
+
+                    <li class="snav-item ">
+                        <a class="nav-link " href="/sneaker/all">Каталог кроссовок</a>
+                    </li>
+                    <li class="nav-item">
+
+                        <div th:if="${user}">
+                           <button type="button" class="btn btn-light" id="logoutButton"><a href="/delete" class="sigma text-dark">Выйти</a></button>
+                        </div>
+                        <div th:if="${admin}">
+                           <button type="button" class="btn btn-light" id="loginAdminPanel"><a href="/admin" class="sigma text-dark">Войти в админ панель</a></button>
+                        </div>
+
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>
+<main>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 sneaker-block">
+                <img th:src="${sneakers[0].photoUrl}" class="sneaker-img" alt="Модель 1">
+                <h1 class="card-title" th:text="${sneakers[0].brand}"></h1>
+                <h3  th:text="${sneakers[0].price}"></h3>
+                <h5 th:text="${sneakers[0].model}"></h5>
+
+                <p th:text="${sneakers[0].color}"></p>
+            </div>
+            <div class="col-md-12 sneaker-block">
+                <img th:src="${sneakers[1].photoUrl}" class="sneaker-img" alt="Модель 1">
+                <h1 class="card-title" th:text="${sneakers[1].brand}"></h1>
+                <h3  th:text="${sneakers[1].price}"></h3>
+                <h5 th:text="${sneakers[1].model}"></h5>
+
+                <p th:text="${sneakers[1].color}"></p>
+            </div>
+            <div class="col-md-12 sneaker-block">
+                <img th:src="${sneakers[2].photoUrl}" class="sneaker-img" alt="Модель 1">
+                <h1 class="card-title" th:text="${sneakers[2].brand}"></h1>
+                <h3  th:text="${sneakers[2].price}"></h3>
+                <h5 th:text="${sneakers[2].model}"></h5>
+
+                <p th:text="${sneakers[2].color}"></p>
+            </div>
+            <div class="col-md-12 sneaker-block">
+                <img th:src="${sneakers[3].photoUrl}" class="sneaker-img" alt="Модель 1">
+                <h1 class="card-title" th:text="${sneakers[3].brand}"></h1>
+                <h3  th:text="${sneakers[3].price}"></h3>
+                <h5 th:text="${sneakers[3].model}"></h5>
+
+                <p th:text="${sneakers[3].color}"></p>
+            </div>
+            <div class="col-md-12 sneaker-block">
+                <img th:src="${sneakers[4].photoUrl}" class="sneaker-img" alt="Модель 1">
+                <h1 class="card-title" th:text="${sneakers[4].brand}"></h1>
+                <h3  th:text="${sneakers[4].price}"></h3>
+                <h5 th:text="${sneakers[4].model}"></h5>
+
+                <p th:text="${sneakers[4].color}"></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let blocks = document.querySelectorAll('.sneaker-block');
+            blocks.forEach((block, index) => {
+                setTimeout(() => {
+                    block.classList.add('show-block');
+                }, index * 200);
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,12 +1,15 @@
 package org.example.ratingsneakerapp.main;
 
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.ratingsneakerapp.JwtCore;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,39 +33,35 @@ public class LoginController {
 
     @Autowired
     private JwtCore jwtCore;
-
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping("/log")
-    public String main(Model model) {
-        model.addAttribute("user", new User());
-        return "login/login";
+    public String main(Model model, HttpServletRequest request) {
+        model.addAttribute("newUser", new User());
+        return jwtService.GetRoleByJwt(request, model, "login/login");
     }
 
     @PostMapping("/log")
-    public String login(@ModelAttribute("user") User user, Model model, HttpServletResponse response) {
+    public String login(@ModelAttribute("newUser") User user, Model model, HttpServletResponse response, HttpServletRequest request) {
         Authentication auth = null;
-        try {
-            auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        }catch (BadCredentialsException e) {
-            model.addAttribute("error",2);
-            return "login/login";
-        }
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+                try {
+                    auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+                } catch (BadCredentialsException e) {
+                    model.addAttribute("error", 2);
+                    return jwtService.GetRoleByJwt(request, model, "login/login");
+                }
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-        UserDetailImpl userDetail = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String jwt = jwtCore.generateToken(auth);
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(3600);
-        response.addCookie(cookie);
-        return "login/sucsess";
-
-
-
-
+                String jwt = jwtCore.generateToken(auth);
+                response.addHeader("Authorization", "Bearer " + jwt);
+                return jwtService.GetRoleByJwt(request, model, "login/sucsess");
+            }
+            model.addAttribute("error", 2);
+            return jwtService.GetRoleByJwt(request, model, "login/login");
 
     }
 }

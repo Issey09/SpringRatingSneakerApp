@@ -1,5 +1,6 @@
 package org.example.ratingsneakerapp;
 
+import org.example.ratingsneakerapp.main.Role;
 import org.example.ratingsneakerapp.main.TokenFilter;
 import org.example.ratingsneakerapp.main.UserService;
 
@@ -44,8 +45,9 @@ public class SecurityConfiguration {
             }))
 
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("admin/**").hasRole("ADMIN")
                 .requestMatchers("/", "/reg", "/log", "/error", "/api/v1/hi").permitAll()
+                    .requestMatchers("/sneaker/**").permitAll()
                 .anyRequest().authenticated())
                 // Обратите внимание на это - Spring будет использовать этот URL для логи
             .exceptionHandling(exception -> exception

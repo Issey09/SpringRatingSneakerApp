@@ -1,6 +1,7 @@
 package org.example.ratingsneakerapp.main;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,27 +32,29 @@ public class RegistrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
     @GetMapping("/reg")
-    public String main(Model model) {
-        model.addAttribute("user", new User());
+    public String main(Model model, HttpServletRequest request) {
+        model.addAttribute("newUser", new User());
 
         // Проверяем, аутентифицирован ли пользователь
 
-        return "registration/reg";
+        return jwtService.GetRoleByJwt(request, model, "registration/reg");
     }
 
     @PostMapping("/reg")
-    public String registerUser(@ModelAttribute("user") User user, Model model) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-
-
-
+    public String registerUser(@ModelAttribute("newUser") User user, Model model, HttpServletRequest request) {
+        User user1 = userRepository.findByUsername(user.getUsername());
+        if (user1 == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             // Проверяем, аутентифицирован ли пользователь
-
-
-            return "registration/sucsess";
+            return jwtService.GetRoleByJwt(request, model, "registration/sucsess");
+        }else {
+            model.addAttribute("NameTaken", "");
+            return jwtService.GetRoleByJwt(request, model, "registration/reg");
+        }
 
     }
 }

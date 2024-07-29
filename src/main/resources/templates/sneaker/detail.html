@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кроссовки Nike Air Max 270</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .card img {
+            border-radius: 10px;
+        }
+        .card-title {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .card-text {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .card-img-top {
+            height: 530px
+        }
+        .text-dark{
+            text-decoration: none;
+            color: inherit;
+        }
+        .price {
+            font-size: 22px;
+            color: #333;
+            margin: 20px 0;
+        }
+        .features {
+            font-size: 16px;
+            color: #777;
+        }
+        .container {
+            padding-top: 10%;
+        }
+    </style>
+</head>
+<header>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Рейтинг кроссовок</a>
+            <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/log">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reg">Зарегистрироваться</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sneaker/all">Каталог кроссовок</a>
+                    </li>
+                    <li class="nav-item">
+
+                        <div th:if="${user}">
+                           <button type="button" class="btn btn-light" id="logoutButton"><a href="/delete" class="sigma text-dark">Выйти</a></button>
+                        </div>
+                        <div th:if="${admin}">
+                           <button type="button" class="btn btn-light" id="loginAdminPanel"><a href="/admin" class="sigma text-dark">Войти в админ панель</a></button>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<body>
+<div class="container">
+    <div class="card shadow-sm">
+        <img th:src="${sneaker.photoUrl}" class="card-img-top" alt="Photo Sneaker">
+        <div class="card-body">
+            <h1 class="card-title" th:text="${sneaker.brand}"></h1>
+            <p class="card-text" th:text="${sneaker.model}"></p>
+            <div class="price" th:text="${sneaker.price} + '$'"></div>
+            <div class="features">
+                <p th:text="${sneaker.color}"></p>
+            </div>
+            <form th:action="@{/sneaker/{id}/like(id=${sneaker.id})}" method="post">
+                <input type="hidden" name="userId" value="1" /> <!-- userId должен быть динамическим -->
+                <button type="submit" class="btn btn-success">Like</button>
+            </form>
+            <form th:action="@{/sneaker/{id}/dislike(id=${sneaker.id})}" method="post">
+                <input type="hidden" name="userId" value="1" /> <!-- userId должен быть динамическим -->
+                <button type="submit" class="btn btn-danger">Dislike</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

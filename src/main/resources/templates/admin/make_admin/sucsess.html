@@ -24,15 +24,15 @@
 
             <div class="navbar-collapse offcanvas-collapse " id="navbarsExampleDefault">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Вернуться на сайт</a>
-                    </li>
                     <li class="snav-item ">
                         <a class="nav-link " href="/admin/make/admin">Дать Админку</a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="admin/create/sneakers">Создай свою модель кроссовок</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/admin/edit/list">Редактировать список кроссовок</a>
                     </li>
 
 
@@ -41,21 +41,11 @@
         </div>
     </nav>
 </header>
-<div class="container">
-    <div class="row justify-content-center align-items-center" style="height: 100vh;">
-        <!-- Колонка с шириной, соответствующей экрану для больших устройств, и по центру -->
-        <div class="col-lg-4">
-            <!-- Карточка Bootstrap -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${user.get().getUsername()}"></h5>
-                    <h6 class="card-text" th:text="${user.get().getEmail()}"></h6>
-                    <p class="card-text" th:text="${user.get().getPassword()}"></p>
-
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="alert alert-success" role="alert">
+    A simple success alert—check it out!
+</div>
+<div class="alert alert-success" role="alert">
+    Теперь пользователь стал администратором!
 </div>
 </main>
 </body>

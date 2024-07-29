@@ -44,6 +44,19 @@
                     <li class="snav-item ">
                         <a class="nav-link " href="/reg">Зарегистрироваться</a>
                     </li>
+                    <li class="snav-item ">
+                        <a class="nav-link " href="/sneaker/all">Каталог кроссовок</a>
+                    </li>
+                    <li class="nav-item">
+
+                        <div th:if="${user}">
+                           <button type="button" class="btn btn-light" id="logoutButton"><a href="/delete" class="sigma text-dark">Выйти</a></button>
+                        </div>
+                        <div th:if="${admin}">
+                           <button type="button" class="btn btn-light" id="loginAdminPanel"><a href="/admin" class="sigma text-dark">Войти в админ панель</a></button>
+                        </div>
+
+                    </li>
 
                 </ul>
 
@@ -53,12 +66,12 @@
 </header>
 <div class="container">
     <!-- Алерт -->
-    <div th:if="${UsernameinBb}" class="alert alert-danger" role="alert">
+    <div th:if="${NameTaken}" class="alert alert-danger" role="alert">
         Такое имя уже занято!
     </div>
 
     <!-- Форма -->
-    <form th:action="@{/reg}" th:method="POST" th:object="${user}">
+    <form th:action="@{/reg}" th:method="POST" th:object="${newUser}">
         <div class="form-signin">
             <div class="text-center">
                 <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
