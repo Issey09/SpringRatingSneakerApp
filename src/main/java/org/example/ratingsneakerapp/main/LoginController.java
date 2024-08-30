@@ -10,6 +10,8 @@ import org.example.ratingsneakerapp.JwtCore;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -35,33 +35,22 @@ public class LoginController {
     private JwtCore jwtCore;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private JwtService jwtService;
 
-    @GetMapping("/log")
-    public String main(Model model, HttpServletRequest request) {
-        model.addAttribute("newUser", new User());
-        return jwtService.GetRoleByJwt(request, model, "login/login");
-    }
+
 
     @PostMapping("/log")
-    public String login(@ModelAttribute("newUser") User user, Model model, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody SignInRequest sign) {
         Authentication auth = null;
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsername(sign.getUsername()) != null) {
                 try {
-                    auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+                    auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(sign.getUsername(), sign.getPassword()));
                 } catch (BadCredentialsException e) {
-                    model.addAttribute("error", 2);
-                    return jwtService.GetRoleByJwt(request, model, "login/login");
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
                 String jwt = jwtCore.generateToken(auth);
-                response.addHeader("Authorization", "Bearer " + jwt);
-                return jwtService.GetRoleByJwt(request, model, "login/sucsess");
+                return ResponseEntity.ok(jwt);
             }
-            model.addAttribute("error", 2);
-            return jwtService.GetRoleByJwt(request, model, "login/login");
-
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

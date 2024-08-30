@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtCore {
@@ -26,8 +28,12 @@ public class JwtCore {
     public String generateToken(Authentication authentication) {
        userDetail = (UserDetailImpl) authentication.getPrincipal();
         String roleString = userDetail.getRole().toString();
+        String username = userDetail.getUsername();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", roleString);
        return Jwts.builder()
-               .setSubject(roleString)
+               .setClaims(claims)
+               .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + lifetime))
                 .signWith(SignatureAlgorithm.HS256, secret)

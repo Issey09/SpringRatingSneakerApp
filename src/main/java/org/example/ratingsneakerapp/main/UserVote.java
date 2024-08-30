@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "user_votes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "sneaker_id"})
+    @UniqueConstraint(columnNames = {"username", "sneaker_id"})
 })
 @Data
 public class UserVote {
@@ -14,8 +14,8 @@ public class UserVote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "sneaker_id", nullable = false)
     private Long sneakerId;

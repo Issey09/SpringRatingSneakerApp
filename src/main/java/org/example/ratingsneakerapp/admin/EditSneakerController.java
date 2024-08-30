@@ -32,22 +32,7 @@ public class EditSneakerController {
     }
 
     // Обновление данных кроссовка
-    @PostMapping("/sneaker/edit")
-    public String updateSneaker(@ModelAttribute("sneaker1") Sneaker sneaker1, @ModelAttribute("sneaker") Sneaker sneaker, Model model) {
-        Sneaker sneakerFound = sneakersRepository.findById(sneaker.getId());
-        if (sneakerFound != null) {
-            model.addAttribute("error", "Sneaker not found");
-            return "admin/edit_sneaker/editSneaker";
-        } else {
-            sneakerFound.setBrand(sneaker1.getBrand());
-            sneakerFound.setColor(sneaker1.getColor());
-            sneakerFound.setModel(sneaker1.getModel());
-            sneakerFound.setPrice(sneaker1.getPrice());
-            sneakerFound.setPhotoUrl(sneaker1.getPhotoUrl());
-            sneakersRepository.save(sneakerFound);
-            return "admin/create_sneakers/success";
-        }
-    }
+
 }
 
 

@@ -1,5 +1,6 @@
 package org.example.ratingsneakerapp;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.ratingsneakerapp.main.Role;
 import org.example.ratingsneakerapp.main.TokenFilter;
 import org.example.ratingsneakerapp.main.UserService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -45,14 +47,11 @@ public class SecurityConfiguration {
             }))
 
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("admin/**").hasRole("ADMIN")
-                .requestMatchers("/", "/reg", "/log", "/error", "/api/v1/hi").permitAll()
-                    .requestMatchers("/sneaker/**").permitAll()
-                .anyRequest().authenticated())
+                .anyRequest().permitAll())
                 // Обратите внимание на это - Spring будет использовать этот URL для логи
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect("/error");
+                    response.sendError(HttpServletResponse.SC_ACCEPTED);
                 }))
             .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);;
 

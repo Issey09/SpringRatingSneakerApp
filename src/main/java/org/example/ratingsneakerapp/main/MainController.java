@@ -19,22 +19,22 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
 
-@Controller
+@RestController
 public class MainController {
     @Autowired
     private SneakersRepository sneakersRepository;
-    @Autowired
-    private JwtService jwtService;
+
 
     @GetMapping("/")
-    public String index(Model model, HttpServletRequest request) {
+    public List<Sneaker> index() {
 
         List<Sneaker> sneakers = sneakersRepository.findTop5ByOrderByRatingDesc();
-        model.addAttribute("sneakers", sneakers);
-        return jwtService.GetRoleByJwt(request, model, "index");
+
+        return sneakers;
     }
 }

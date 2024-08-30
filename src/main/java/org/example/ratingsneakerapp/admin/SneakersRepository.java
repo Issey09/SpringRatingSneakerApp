@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 @Component
 public interface SneakersRepository extends JpaRepository<Sneaker, Long> {
-    Sneaker findById(long id);
+    Sneaker findById(int id);
     List<Sneaker> findTop5ByOrderByRatingDesc();
     List<Sneaker> findAll();
      List<Sneaker> findByBrand(String brand);

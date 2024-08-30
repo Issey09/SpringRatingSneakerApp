@@ -4,14 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.example.ratingsneakerapp.admin.Sneaker;
 import org.example.ratingsneakerapp.admin.SneakersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/sneaker")
 public class SneakerController {
     @Autowired
@@ -21,41 +20,66 @@ public class SneakerController {
     private UserVoteRepository userVoteRepository;
 
     @Autowired
-    private JwtService jwtService;
+    private UserRepository userRepository;
 
-    @GetMapping("/{id}")
-    public String getSneakerById(@PathVariable Long id, Model model, HttpServletRequest request) {
+
+
+    @GetMapping("/detail")
+    public Sneaker getSneakerById(@RequestParam int id) {
+    return sneakersRepository.findById(id);
+    }
+
+
+
+    @PostMapping("/like")
+    public String likeSneaker(@RequestBody SneakerVoteRequest request) {
+    Long id = request.getId();
+    String username = request.getUsername();
+
+    Optional<UserVote> existingVote = userVoteRepository.findByUsernameAndSneakerId(username, id);
+    if (!existingVote.isPresent()) {
         Optional<Sneaker> sneaker = sneakersRepository.findById(id);
         if (sneaker.isPresent()) {
-            model.addAttribute("sneaker", sneaker.get());
-            return jwtService.GetRoleByJwt(request, model, "sneaker/detail");
-        }
-        return jwtService.GetRoleByJwt(request, model, "error");
-    }
+            Sneaker s = sneaker.get();
+            s.setLikes(s.getLikes() + 1);
+            sneakersRepository.save(s);
 
-    @PostMapping("/{id}/like")
-    public String likeSneaker(@PathVariable Long id, @RequestParam Long userId, HttpServletRequest request, Model model) {
-        Optional<UserVote> existingVote = userVoteRepository.findByUserIdAndSneakerId(userId, id);
-        if (!existingVote.isPresent()) {
-            Optional<Sneaker> sneaker = sneakersRepository.findById(id);
-            if (sneaker.isPresent()) {
-                Sneaker s = sneaker.get();
-                s.setLikes(s.getLikes() + 1);
-                sneakersRepository.save(s);
-
-                UserVote userVote = new UserVote();
-                userVote.setUserId(userId);
-                userVote.setSneakerId(id);
-                userVote.setVoteType("like");
-                userVoteRepository.save(userVote);
-            }
+            UserVote userVote = new UserVote();
+            userVote.setUsername(username);
+            userVote.setSneakerId(id);
+            userVote.setVoteType("like");
+            userVoteRepository.save(userVote);
         }
-        return jwtService.GetRoleByJwt(request, model, "redirect:/sneaker/" + id);
     }
+    return "Vote counted";
+}
+
+    @PostMapping("/dislike")
+    public String dislikeSneaker(@RequestBody SneakerVoteRequest request) {
+    Long id = request.getId();
+    String username = request.getUsername();
+
+    Optional<UserVote> existingVote = userVoteRepository.findByUsernameAndSneakerId(username, id);
+    if (!existingVote.isPresent()) {
+        Optional<Sneaker> sneaker = sneakersRepository.findById(id);
+        if (sneaker.isPresent()) {
+            Sneaker s = sneaker.get();
+            s.setDislikes(s.getDislikes() + 1);
+            sneakersRepository.save(s);
+
+            UserVote userVote = new UserVote();
+            userVote.setUsername(username);
+            userVote.setSneakerId(id);
+            userVote.setVoteType("dislike");
+            userVoteRepository.save(userVote);
+        }
+    }
+    return "Vote counted";
+}
+
     @GetMapping("/all")
-    public String filterSneakers(@RequestParam(value = "brand", required = false) String brand,
-                                 @RequestParam(value = "model", required = false) String model,
-                                 Model modelAttr, HttpServletRequest request) {
+    public List<Sneaker> filterSneakers(@RequestParam(value = "brand", required = false) String brand,
+                                        @RequestParam(value = "model", required = false) String model) {
         List<Sneaker> filteredSneakers;
 
         if (brand != null && !brand.isEmpty() && model != null && !model.isEmpty()) {
@@ -67,29 +91,8 @@ public class SneakerController {
         } else {
             filteredSneakers = sneakersRepository.findAll();
         }
+        return filteredSneakers;
 
-        modelAttr.addAttribute("sneakers", filteredSneakers);
-        return jwtService.GetRoleByJwt(request, modelAttr, "sneaker/all");
-    }
-
-    @PostMapping("/{id}/dislike")
-    public String dislikeSneaker(@PathVariable Long id, @RequestParam Long userId, HttpServletRequest request, Model model) {
-        Optional<UserVote> existingVote = userVoteRepository.findByUserIdAndSneakerId(userId, id);
-        if (!existingVote.isPresent()) {
-            Optional<Sneaker> sneaker = sneakersRepository.findById(id);
-            if (sneaker.isPresent()) {
-                Sneaker s = sneaker.get();
-                s.setDislikes(s.getDislikes() + 1);
-                sneakersRepository.save(s);
-
-                UserVote userVote = new UserVote();
-                userVote.setUserId(userId);
-                userVote.setSneakerId(id);
-                userVote.setVoteType("dislike");
-                userVoteRepository.save(userVote);
-            }
-        }
-        return jwtService.GetRoleByJwt(request, model, "redirect:/sneaker/" + id);
     }
 }
 
