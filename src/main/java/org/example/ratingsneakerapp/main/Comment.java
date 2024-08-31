@@ -13,9 +13,9 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String comment;
+    private String content;
     private String author;
-    private int sneakers_id;
+    private int sneakersId;
     @CreationTimestamp
     private LocalDateTime timestamp;
 }

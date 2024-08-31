@@ -4,10 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.annotations.Comments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RequestMapping("/comment")
 @RestController
 public class CommentsController {
     @Autowired
@@ -17,16 +18,23 @@ public class CommentsController {
     private CommentRepository commentRepository;
 
 
-    @PostMapping("/add/comments")
-    public ResponseEntity<?> addComment(HttpServletRequest request, @RequestBody Comment comment) {
+    @PostMapping("/add")
+    public ResponseEntity<?> addComment(HttpServletRequest request, @RequestBody CreateComment comment) {
         String username = userService.findUser(request);
 
-        comment.setComment(comment.getComment());
-        comment.setAuthor(username);
-        comment.setSneakers_id(comment.getSneakers_id());
+        Comment savedComment = new Comment();
+        savedComment.setContent(comment.getContent());
+        savedComment.setAuthor(username);
+        savedComment.setSneakersId(comment.getSneakerId());
+        commentRepository.save(savedComment);
 
-        commentRepository.save(comment);
+
 
         return ResponseEntity.ok().body(comment);
+    }
+
+    @GetMapping("/get")
+    public List<Comment> getComments(@RequestParam int id) {
+        return commentRepository.findBySneakersId(id);
     }
 }

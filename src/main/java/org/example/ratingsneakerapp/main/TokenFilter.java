@@ -30,7 +30,6 @@ import java.util.List;
 public class TokenFilter  extends OncePerRequestFilter {
     @Autowired
     private JwtCore jwtCore;
-    private UserDetailsService userDetailsService;
     @Value("${spring.app.secret}")
     private String secret;
 
@@ -43,7 +42,7 @@ public class TokenFilter  extends OncePerRequestFilter {
              jwt = jwtCore.generateToken(auth);
             response.addHeader("Authorization", "Bearer " + jwt);
          }
-        String role = "GUEST";
+        String role = null;
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authorizationHeader = httpRequest.getHeader("Authorization");
@@ -53,11 +52,7 @@ public class TokenFilter  extends OncePerRequestFilter {
                         .setSigningKey(secret)
                         .parseClaimsJws(jwt)
                         .getBody();
-
-            String username = claims.getSubject();
-            role = claims.get("role", String.class);
-            System.out.println("username: " + username + " role: " + role);
-
+            role = claims.getSubject();
             if (role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
@@ -69,17 +64,6 @@ public class TokenFilter  extends OncePerRequestFilter {
             }
 
 
-        }else {
-
-            System.out.println(role);
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
-
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        null, null, Collections.singletonList(authority));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         }
 
         filterChain.doFilter(request, response);

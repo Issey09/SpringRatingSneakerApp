@@ -6,10 +6,12 @@ import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jfr.Label;
 import org.example.ratingsneakerapp.JwtCore;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +31,7 @@ import java.util.Optional;
 @Controller
 public class LoginController {
     @Autowired
+    @Lazy
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -42,11 +45,7 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody SignInRequest sign) {
         Authentication auth = null;
         if (userRepository.findByUsername(sign.getUsername()) != null) {
-                try {
-                    auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(sign.getUsername(), sign.getPassword()));
-                } catch (BadCredentialsException e) {
-                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-                }
+                auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(sign.getUsername(), sign.getPassword()));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 String jwt = jwtCore.generateToken(auth);
                 return ResponseEntity.ok(jwt);

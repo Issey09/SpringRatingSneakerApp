@@ -45,15 +45,18 @@ public class SecurityConfiguration {
                 corsConfiguration.setAllowCredentials(true);
                 return corsConfiguration;
             }))
-
             .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll())
-                // Обратите внимание на это - Spring будет использовать этот URL для логи
+                .requestMatchers("admin/**").hasRole("ADMIN")
+                .requestMatchers("/", "/reg", "/log", "/error", "/api/v1/hi").permitAll()
+                    .requestMatchers("/sneaker/**", "/comment/**").permitAll()
+
+                .anyRequest().authenticated())
+
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendError(HttpServletResponse.SC_ACCEPTED);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 }))
-            .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);;
+            .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -76,4 +79,3 @@ public class SecurityConfiguration {
     }
 
 }
-
